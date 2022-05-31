@@ -1,10 +1,76 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Html
+@{
     ViewData["Title"] = "La mia prima  pizzeria";
     // Layout ="~/Views/Shared/_LAyoutPage1.cshtml"
+    ViewData["Name"] = "Marco";
+    ViewData["LastName"] = "Truncellito";
+ /* 6. Partendo dalla data di oggi (usando la classe DateTime) stampare in pagina
+a. la data di 7 giorni fa
+b. che giorno della settimana Ã¨ oggi (il risultato dovrÃ  essere il nome del giorno (LunedÃ¬, MartedÃ¬, ...)
+c. che giorno della settimana sarÃ  nello stesso giorno e mese di oggi ma tra un anno 
+(il risultato dovrÃ  essere il nome del giorno (LunedÃ¬, MartedÃ¬, ...)*/
 }
 @{
     Layout = null;
 }
+@functions{
+    public IHtmlContent DateInfo()
+    {
+        DateTime Today =  DateTime.Now;
+        DateTime ToOneYear = new DateTime(Today.Year + 1, Today.Month, Today.Day);
+        DateTime SevenDaysAgo = Today.AddDays(-7);
+        return Html.Raw($@"
+            <ul>
+                <li>
+                   7 Giorni fa: {SevenDaysAgo}
+                </li>
+                <li>
+                    Oggi è: {DateTime.Today.DayOfWeek}    
+                </li>
+                <li>
+                    Tra un anno sarà: {ToOneYear.DayOfWeek}   
+                </li>
+            </ul>
+        ");
+    } 
+    public IHtmlContent SumNumbers(int iNumb)
+    {
+        int iSum = 0;
+        for(int i = 1; i <= iNumb; i++)
+            iSum += i;
+        return Html.Raw($@"
+            <span>{iSum}</span>
+        ");
+    }
+    public IHtmlContent HowManyLetter(string sString, string sLetter)
+    {
+        int Counter = 0;
+        foreach(char Lett in sString)
+        {
+            if (Lett == Convert.ToChar(sLetter))
+                Counter++;
+        }
+        return Html.Raw($@"<span> Il numero di volte che la lettera {sLetter} compare nel testo è : {Counter}");
+    }
+    public IHtmlContent IncludedNumbers(int StartInterval, int StopInterval)
+    {
+        List<int> Numbers = new List<int>();
+        string PrintNumber = "";
+        Random rNumb = new Random();
+
+        for(int i = 0; i < 20; i++)
+        {
+            int genericNumb = rNumb.Next(1,90);
+            Numbers.Add(genericNumb);    
+            if(genericNumb >= StartInterval && genericNumb <= StopInterval)
+                PrintNumber += Convert.ToString(genericNumb) + " ";
+        }
+        return Html.Raw($@"
+            <span> Tra venti numeri casuali, i numeri compresi tra {StartInterval} e {StopInterval} sono: {PrintNumber}</span>
+            ");
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,6 +106,10 @@
     <div class="container">
         <main role="main" class="pb-3">
             <section class="row"> 
+                <div class="col-12"> @HowManyLetter("nel mezzo del cammin di nostra vita", "a")</div>
+                <div class="col-12">@IncludedNumbers(20,70)</div>
+                <div class = "col-12"> @DateTime.Now.ToString("dd'-'MM'-'yyyy'T'HH':'mm':'ss")</div>
+                <div class = "col-12"> @DateInfo() </div>
                 <div class="col-12 text-center text-uppercase text-danger display-2 mb-3">Le nostre pizze</div>
                 <div class="col-12 col-sm-6 col-lg-4">
                     <div class="card mb-2" style="width: 18rem;">
@@ -77,6 +147,7 @@
                           Aggiungi al carrello
                         </button>
                         <span class="btn btn-danger text-white">10.99€</span>
+                         @SumNumbers(10)
                       </div>
                     </div>
                 </div>
@@ -106,6 +177,7 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2022 - la_mia_pizzeria_static - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <h6>@ViewData["Name"] @ViewData["LastName"]</h6>
         </div>
     </footer>
 
